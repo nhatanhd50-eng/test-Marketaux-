@@ -16,7 +16,7 @@ st.title("🥇 Phân Tích Cảm Xúc Tin Tức Vàng (XAU/USD)")
 st.markdown(
     """
     Ứng dụng sử dụng API **Marketaux** để lấy tin tức mới nhất về Vàng và phân tích cảm xúc thị trường.
-    Dữ liệu được cập nhật theo thời gian thực.
+    Dữ liệu được lấy từ các nguồn tiếng Anh (US, UK, CA, AU).
     """
 )
 
@@ -63,8 +63,10 @@ if st.button("🔍 Lấy Dữ Liệu Tin Tức", type="primary", use_container_w
         params = {
             "api_token": api_token,
             "symbols": selected_symbol,
-            "filter_entities": "true",
-            "language": "en",
+            "filter_entities": "false",  # Đặt false để dễ tìm kiếm hơn
+            # Không lọc theo ngôn ngữ 'en' để tránh bỏ sót bài viết tiếng Anh từ các quốc gia khác
+            # Thay vào đó, lọc theo quốc gia có nguồn tin tiếng Anh
+            "countries": "us,gb,ca,au", # Mỹ (us), Anh (gb), Canada (ca), Úc (au)
             "limit": limit_news
         }
 
@@ -123,7 +125,7 @@ if st.button("🔍 Lấy Dữ Liệu Tin Tức", type="primary", use_container_w
                     st.metric(
                         label="Điểm TB Cảm Xúc",
                         value=f"{avg_sentiment:.3f}",
-                        delta="Trung lập",
+                        delta="Trung bình",
                         delta_color=delta_color
                     )
                 
@@ -134,7 +136,7 @@ if st.button("🔍 Lấy Dữ Liệu Tin Tức", type="primary", use_container_w
                 with col3:
                     neg_count = len(df[df['Điểm cảm xúc'] < 0])
                     st.metric(label="Bài Tiêu cực", value=neg_count, delta="Thấp hơn 0")
-
+                
                 # Vẽ biểu đồ xu hướng cảm xúc
                 st.subheader("Biểu đồ Xu Hướng Cảm Xúc")
                 # Đảo ngược dataframe để vẽ từ cũ nhất -> mới nhất
